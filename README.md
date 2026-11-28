@@ -1,5 +1,7 @@
 # Node.js 26 Express TypeScript Starter
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/nodejs-26-express-typescript-starter)
+
 A minimal Express API on Node.js 26 LTS and TypeScript 7 — the framework most Node developers actually build with, on the new LTS line, with nothing extra to configure.
 
 ## Why this exists
@@ -10,7 +12,7 @@ A one line program that prints a port and exits is not a service. A container th
 - `GET /health` answers `{"status":"ok"}` plus uptime, wired as the Railway healthcheck.
 - Graceful shutdown on `SIGTERM` and `SIGINT`: in-flight requests finish before the process exits. Railway sends `SIGTERM` before replacing a container; without a handler, in-flight requests are cut off on every deploy.
 - Zero required environment variables. One service, no database, no volume.
-- No Dockerfile. Railway Nixpacks auto-detects Node from `.node-version` and `package.json`.
+- Deploys from a prebuilt image, `ghcr.io/ninja-templates/nodejs-26-express-typescript-starter:26.13.1`, built by GitHub Actions from this repo's Dockerfile: the official `node` image (26.13.1, digest-pinned) plus our entrypoint wrapper (the PG19 approach, Ahmed's call, 2026-11-28). The template pulls the image, so deploys skip the build step. The repo lives in the `ninja-templates` org.
 
 ## Versions (pinned exactly)
 
@@ -28,7 +30,7 @@ This template deploys as one separate standalone service, so you can switch or u
 2. Move your code into the new service and test it on the generated Railway domain.
 3. When it is green, point your domain at the new service and remove the old one.
 
-Upgrading Node later is the same shape: the version lives in one place, `.node-version` (plus `engines` in `package.json`). Bump the pin, redeploy, and the service comes up on the new version with the same healthcheck and shutdown behaviour. No reconfiguration, no extra services to wire.
+Upgrading Node later is the same shape: the runtime lives in the Dockerfile (`FROM node:26.13.1@sha256:...`, digest-pinned). Bump the base pin, rebuild the image via Actions, update the template's image digest, redeploy, and the service comes up on the new version with the same healthcheck and shutdown behaviour. No reconfiguration, no extra services to wire.
 
 ## Endpoints
 
