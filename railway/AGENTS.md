@@ -6,15 +6,26 @@
   No caret ranges, no `latest`, no `-next` pre-release versions.
 - Node 26.13.1 (LTS "Lithium"), Express 5.3.0, TypeScript 7.0.2,
   @types/node 26.6.6, @types/express 5.0.6, tsx 4.23.15. The local
-  parity test ran against exactly these versions.
+  parity test ran against exactly these versions. The Docker base
+  image is digest-pinned (`node:26.13.1@sha256:bcaafe...`, amd64);
+  the prebuilt image is `ghcr.io/ninja-templates/
+  nodejs-26-express-typescript-starter:26.13.1`, built by GitHub
+  Actions from this repo's Dockerfile (Ahmed's call, 2026-11-28,
+  the PG19 approach).
 - When a new 26.x security patch lands, bump `.node-version` (and
   the README) to it and re-run the full parity test before any
   publish.
 
 ## Shape (never regress)
 
-- NO Dockerfile. Railway Nixpacks auto-detects Node. One service,
-  no database, no volume, zero required env vars.
+- Dockerfile on the official `node` image (26.13.1, digest-pinned)
+  plus our entrypoint wrapper, prebuilt by GitHub Actions into
+  `ghcr.io/ninja-templates/nodejs-26-express-typescript-starter:
+  26.13.1`; the template pulls that image (Ahmed's call,
+  2026-11-28, the PG19 approach; supersedes the earlier
+  no-Dockerfile Nixpacks shape). The repo lives in the
+  `ninja-templates` org. One service, no database, no volume,
+  zero required env vars.
 - Version pinning lives in `.node-version` (exact) and the
   `package.json` engines field (`26.x`).
 - `railway.json` carries the healthcheck (`/health`) and the
